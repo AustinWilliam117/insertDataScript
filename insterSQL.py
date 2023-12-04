@@ -120,7 +120,13 @@ talk_times = '12'
 province = '100' # 省份ID 上海210
 department = '3' # 所属用户组
 current_count = '0' # 并发数
-rebot_name = '黑龙江_2023年移动业务问卷' # 机器人流程
+business_success = '1' # 是否业务成功
+entrance_id = '098' # 外部ID
+oss_url = '' # oss路径
+project_name = '098' # 项目名称
+region_id = '' # 归属地
+robot_name = '黑龙江_2023年移动业务问卷' # 机器人流程
+task_id = '098' # 在线ID
 flow_path = '开场白_询问是否本人-是机主本人_询问是否登门检测-已登门_请客户评价上门服务-通用_未理解-1_6分_致歉_询问不满意原因-低分原因_致歉_结束语1'
 cmos_modify_time = '2023-06-14 05:57:19.155'
 slots_info = '{\"sayRengongCount\": 0, \"四分\": \"\", \"六分\": \"\", \"三分\": \"3\", \"两分\": \"\", \"五分\": \"\", \"一分\": \"\", \"服务品质问题\": \"\", \"宽带类问题\": \"网速不好\", \"手机上网及套餐资费问题\": \"\", \"互联网电视问题\": \"\", \"遥控器问题\": \"\", \"看家宝问题\": \"\"}'
@@ -256,7 +262,9 @@ if __name__ == '__main__':
             dataListSQL1 = '"'+increaseID1() +'"\t"'+ uid +'"\t"'+ robot_flow +'"\t"'+ caller +'"\t"'+ create_phone() +'"\t"'+ call_type +'"\t"'+ formatTime +'"\t"'+ \
                             formatTime +'"\t"'+ duration +'"\t"'+ call_status() +'"\t"'+ talk_times +'"\t"'+ labelValues +'"\t"'+ \
                             slots_info +'"\t"'+ get_gender() +'"\t"'+ province +'"\t\t"'+ flow_path +'"\t"'+ department +'"\t"'+ \
-                            disconnect_reason() +'"\t"'+ current_count +'"\t"'+ "0" +'"\t"'+ get_success() +'"\t"'+ cmos_modify_time +'"'
+                            disconnect_reason() +'"\t"'+ current_count +'"\t"'+ "0" +'"\t"'+ get_success() +'"\t"'+ \
+                            business_success +'"\t"'+ entrance_id +'"\t"'+ oss_url +'"\t"'+ project_name +'"\t"'+ \
+                            region_id +'"\t"'+ robot_name +'"\t"'+ task_id +'"\t"'+ cmos_modify_time +'"'
             #print(dataListSQL1)
 
             writeTxt(formatTime1, 'dataListSQL1', dataListSQL1)
