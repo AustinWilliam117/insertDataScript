@@ -10,10 +10,10 @@ import os
 
 """链接数据库"""
 db_config = {
-    'host':'10.54.0.28',
+    'host':'10.54.0.30',
     'user':'root',
     'password':'Pachira@123',
-    'database':'x86_27_all_bj',
+    'database':'aicall_job_42_bj',
     'port':3307,
     'charset':'utf8mb4',
     'autocommit':True,
@@ -97,7 +97,7 @@ def commitDB(data_file, table_name):
     #print("========================")
     try:
         with conn.cursor() as cursor:
-            cursor.execute("use x86_27_all_bj;")
+            cursor.execute("use aicall_job_42_bj;")
             conn.commit()
             cursor.execute(loadData)
             conn.commit()
@@ -106,7 +106,7 @@ def commitDB(data_file, table_name):
             print(data_file,table_name,"数据加载成功")
     except Exception as err:
         print(f"数据加载失败: {err}")
-        
+
     conn.close()
     # cur.close()
     # db.close()
@@ -117,9 +117,10 @@ caller = '10086'
 call_type = 'out'
 duration = '100'  # 通话时长
 talk_times = '12'
-province = '311' # 省份ID 上海210
-department = '336' # 所属用户组
+province = '100' # 省份ID 上海210
+department = '3' # 所属用户组
 current_count = '0' # 并发数
+rebot_name = '黑龙江_2023年移动业务问卷' # 机器人流程
 flow_path = '开场白_询问是否本人-是机主本人_询问是否登门检测-已登门_请客户评价上门服务-通用_未理解-1_6分_致歉_询问不满意原因-低分原因_致歉_结束语1'
 cmos_modify_time = '2023-06-14 05:57:19.155'
 slots_info = '{\"sayRengongCount\": 0, \"四分\": \"\", \"六分\": \"\", \"三分\": \"3\", \"两分\": \"\", \"五分\": \"\", \"一分\": \"\", \"服务品质问题\": \"\", \"宽带类问题\": \"网速不好\", \"手机上网及套餐资费问题\": \"\", \"互联网电视问题\": \"\", \"遥控器问题\": \"\", \"看家宝问题\": \"\"}'
@@ -167,9 +168,21 @@ def createDir(path):
     else:
         print(path, " 该文件夹已经存在")
 
+"""使用gb2312拼接中文"""
+def gb2312():
+    try:
+        head = random.randint(0xb0, 0xf7)
+        body = random.randint(0xa1, 0xfe)
+        val = f'{head:x} {body:x}'
+        strChar = bytes.fromhex(val).decode('gb2312')
+        return strChar
+    except UnicodeDecodeError:
+        pass
+
 id1 = 50003
 id2 = 50003
 id3 = 50003
+id4 = 50003
 
 """自增ID"""
 def increaseID1():
@@ -189,22 +202,30 @@ def increaseID3():
     id3 += 1
     return str(id3)
 
+"""自增ID"""
+def increaseID4():
+    global id4
+    id4 += 1
+    return str(id4)
+
 if __name__ == '__main__':
     # 程序使用CPU开始时间
     start=datetime.now()
-    
+
     baseFile = '/var/lib/mysql-files/data'
     #baseFile = r"C:\Users\William\Desktop\data"
 
     # 初始list字段
-    dataListSQL1_initList = '"id"	"call_id"	"robot_flow"	"caller"	"called"	"call_type"	"start_time"	"end_time"	"duration"	"call_status"	"talk_times"	"call_label"	"slots_info"	"gender"	"province"	"faq_label"	"flow_path"	"department"	"disconnect_reason"	"current_count"	"variabules"	"is_success"	"cmos_modify_time"'
+    dataListSQL1_initList = '"id"	"call_id"	"robot_flow"	"caller"	"called"	"call_type"	"start_time"	"end_time"	"duration"	"call_status"	"talk_times"	"call_label"	"slots_info"	"gender"	"province"	"faq_label"	"flow_path"	"department"	"disconnect_reason"	"current_count"	"variabules"	"is_success"	"business_success" "entrance_id" "oss_url" "project_name" "region_id" "rebot_name" "task_id" "cmos_modify_time"'
     dataListSQL2_initList = '"id"	"call_id"	"talker"	"content"	"talk_at"	"label_name"	"uuid"	"file_url"	"prompt_name"	"task_name"	"cmos_modify_time"'
     dataListSQL3_initList = '"call_id"	"call_label"	"id"	"cmos_modify_time"'
-    
+    dataListSQL4_initList = '"call_id" "slots_key" "slots_value" "id" "cmos_modify_time"'
+
     # al_job、al_mat、al_tag list数据
     dataListSQL1 = ''
     dataListSQL2 = ''
     dataListSQL3 = ''
+    dataListSQL4 = ''
     start_date = datetime.strptime("2023-09-11 16:53:04", "%Y-%m-%d %H:%M:%S")
     end_date = start_date + timedelta(days=7)  # 30天后
     current_date = start_date
@@ -224,11 +245,11 @@ if __name__ == '__main__':
         #writeTxtInit(formatTime1, 'dataListSQL3', dataListSQL3_initList)
 
         # 每天生成50w数据
-        for i in range(0, 500000):
+        for i in range(0, 5):
             uid = str(create_uuid())
             # 随机拿5个call_label
             labelValues = label()
-            
+
             # dataListSQL1 = (uid, robot_flow, caller, create_phone(), call_type, formatTime, formatTime, duration,
             #                     call_status(), talk_times, labelList, slots_info, get_gender(), province, flow_path,
             #                     department, disconnect_reason(), current_count, cmos_modify_time, get_success())
@@ -237,7 +258,7 @@ if __name__ == '__main__':
                             slots_info +'"\t"'+ get_gender() +'"\t"'+ province +'"\t\t"'+ flow_path +'"\t"'+ department +'"\t"'+ \
                             disconnect_reason() +'"\t"'+ current_count +'"\t"'+ "0" +'"\t"'+ get_success() +'"\t"'+ cmos_modify_time +'"'
             #print(dataListSQL1)
-            
+
             writeTxt(formatTime1, 'dataListSQL1', dataListSQL1)
 
             for value in range(10):
@@ -250,13 +271,23 @@ if __name__ == '__main__':
 
             # 将label字符串转成列表
             labelValues = labelValues.split(',')
-            
+
             for value in labelValues:
                 # dataListSQL3 = (uid, value, '2022-06-21 11:23:23.467')
                 dataListSQL3 = '"'+ uid +'"\t"'+ value +'"\t"'+increaseID3()+ '"\t"'+ '2022-06-21 11:23:23.467'+'"'
                 #print(dataListSQL3)
                 writeTxt(formatTime1, 'dataListSQL3', dataListSQL3)
-            
+
+            """al.slots 表字段填充"""
+            for value in range(1):
+                randomCharsKey = "".join(gbk2312() for i in range(30))
+                # randomChars1 = "".join(gbk2312() for i in range(300))
+                randomChars2 = "".join(gbk2312() for i in range(50))
+
+                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey + '"\t"' + randomChars2 + '"\t"' + increaseID4()+ '"\t"'+ '2022-06-21 11:23:23.467'+'"'
+                print(dataListSQL4)
+                writeTxt(formatTime1, 'dataListSQL4', dataListSQL4)
+
         # 提交数据库
         txtPath = baseFile + '/' + formatTime1 + '/' + 'dataListSQL1' + '.txt'
         #print(txtPath)
@@ -267,6 +298,9 @@ if __name__ == '__main__':
         # 提交数据库
         txtPath = baseFile + '/' + formatTime1 + '/' + 'dataListSQL3' + '.txt'
         commitDB(txtPath, 'al_tag_202309')
+        # 提交数据库
+        txtPath = baseFile + '/' + formatTime1 + '/' + 'dataListSQL4' + '.txt'
+        commitDB(txtPath, 'al_slots_20230915')
 
         # 循环结束加1天
         current_date += timedelta(days=1)
@@ -275,4 +309,3 @@ if __name__ == '__main__':
     end=datetime.now()
     # 打印耗时
     print('Running time: %s Seconds'%(end-start))
-
