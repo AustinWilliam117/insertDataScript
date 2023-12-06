@@ -55,7 +55,7 @@ def label():
 """获取当前时间"""
 def get_now(after: int):
     # 获取当前时间
-    now = datetime.strptime("2023-09-01 16:53:04", "%Y-%m-%d %H:%M:%S")
+    now = datetime.strptime("2023-10-01 16:53:04", "%Y-%m-%d %H:%M:%S")
     now = now + timedelta(days=after)
     # print(now)
     formatTime = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -188,16 +188,13 @@ def createDir(path):
 
 """生成文本"""
 fake = Faker('zh_CN')
-def createTxt(num):
+def createNumber(num):
     sentence = fake.sentence(num)
+    if len(sentence) >= num:
+        sentence = sentence[:num]
     if sentence.endswith('.'):
         sentence = sentence[:-1]
     return sentence
-
-id1 = 550004
-id2 = 550004
-id3 = 550004
-id4 = 550004
 
 """自增ID"""
 def increaseID1():
@@ -223,9 +220,35 @@ def increaseID4():
     id4 += 1
     return str(id4)
 
+"""固定的100个字段"""
+def createField(field,num,character):
+    for keyi in range(num):
+        randomCharsKey1 = createNumber(30)
+        randomCharsKey2 = createNumber(2)
+        randomCharsKey = randomCharsKey1 + character + randomCharsKey2
+        field.append(randomCharsKey)
+    return field
+
 if __name__ == '__main__':
     # 程序使用CPU开始时间
     start=datetime.now()
+
+    # 自增ID
+    incremesID = 1180004
+    id1 = incremesID
+    id2 = incremesID
+    id3 = incremesID
+    id4 = incremesID
+
+    # 创建固定字段
+    randomCharsKey__ = []
+    randomCharsKey1_ = []
+    randomCharsKey2_ = []
+
+    createField(randomCharsKey__,5,'__')
+    createField(randomCharsKey1_,55,'_')
+    createField(randomCharsKey2_,40,'_')
+    print(randomCharsKey__)
 
     baseFile = '/var/lib/mysql-files/data'
     #baseFile = r"C:\Users\William\Desktop\data"
@@ -241,7 +264,7 @@ if __name__ == '__main__':
     dataListSQL2 = ''
     dataListSQL3 = ''
     dataListSQL4 = ''
-    start_date = datetime.strptime("2023-12-02 16:53:04", "%Y-%m-%d %H:%M:%S")
+    start_date = datetime.strptime("2023-12-01 16:53:04", "%Y-%m-%d %H:%M:%S")
     end_date = start_date + timedelta(days=0)  # 30天后
     current_date = start_date
     while current_date <= end_date:
@@ -259,8 +282,9 @@ if __name__ == '__main__':
         #writeTxtInit(formatTime1, 'dataListSQL2', dataListSQL2_initList)
         #writeTxtInit(formatTime1, 'dataListSQL3', dataListSQL3_initList)
 
+
         # 每天生成50w数据
-        for i in range(0, 300001):
+        for i in range(0,200000):
             uid = str(create_uuid())
             # 随机拿5个call_label
             labelValues = label()
@@ -297,23 +321,25 @@ if __name__ == '__main__':
 
             """al.slots 表字段填充"""
             # 30个非固定值信息提取字段
-            for value in range(30):
-                randomCharsKey1 = createTxt(15)
-                randomCharsKey2 = createTxt(15)
-                randomCharsKey = randomCharsKey1 + '__' + randomCharsKey2
-                randomChars1 = createTxt(300)
-                # randomChars2 = "".join(gb2312() for y in range(50))
-                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey + '"\t"' + randomChars1 + '"\t"' + increaseID4()+ '"\t"'+ '2022-06-21 11:23:23.467'+'"'
+            for value in range(5): # 5
+                randomChars1 = createNumber(150)
+                # randomChars2 = "".join(gb2312() for yin range(50))
+                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey__[value] + '"\t"' + randomChars1 + '"\t"' + increaseID4()+ '"\t"'+ '2022-06-21 11:23:23.467'+'"'
+                #print(randomCharsKey__[value])
                 #print(dataListSQL4)
                 writeTxt(formatTime1, 'dataListSQL4', dataListSQL4)
-            # 70个固定值信息提取字段
-            for value in range(70):
-                randomCharsKey1 = createTxt(15)
-                randomCharsKey2 = createTxt(15)
-                randomCharsKey = randomCharsKey1 + '_' + randomCharsKey2
+            # 55个固定值信息提取字段
+            for value in range(55): # 55
                 # randomChars1 = "".join(gb2312() for i in range(300))
-                randomChars2 = createTxt(50)
-                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey + '"\t"' + randomChars2 + '"\t"' + increaseID4() + '"\t"' + '2022-06-21 11:23:23.467' + '"'
+                randomChars2 = createNumber(10)
+                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey1_[value] + '"\t"' + randomChars2 + '"\t"' + increaseID4() + '"\t"' + '2022-06-21 11:23:23.467' + '"'
+                #print(dataListSQL4)
+                writeTxt(formatTime1, 'dataListSQL4', dataListSQL4)
+            # 55个固定值信息提取字段
+            for value in range(40): # 40
+                # randomChars1 = "".join(gb2312() for i in range(300))
+                randomChars3 = createNumber(30)
+                dataListSQL4 = '"' + uid + '"\t"' + randomCharsKey2_[value] + '"\t"' + randomChars3 + '"\t"' + increaseID4() + '"\t"' + '2022-06-21 11:23:23.467' + '"'
                 #print(dataListSQL4)
                 writeTxt(formatTime1, 'dataListSQL4', dataListSQL4)
 
@@ -327,10 +353,10 @@ if __name__ == '__main__':
         commitDB(txtPath, 'al_mat_202312')
         # 提交数据库
         txtPath = baseFile + '/' + formatTime1 + '/' + 'dataListSQL3' + '.txt'
-        commitDB(txtPath, 'al_tag_202312')
+        commitDB(txtPath, 'al_tag_202310')
         # 提交数据库
         txtPath = baseFile + '/' + formatTime1 + '/' + 'dataListSQL4' + '.txt'
-        commitDB(txtPath, 'al_slots_20231202')
+        commitDB(txtPath, 'al_slots_20231201')
 
         # 循环结束加1天
         current_date += timedelta(days=1)
